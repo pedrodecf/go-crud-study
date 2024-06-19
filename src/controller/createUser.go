@@ -1,11 +1,21 @@
 package controller
 
 import (
+	"fmt"
+
 	"github.com/gin-gonic/gin"
-	"github.com/pedrodecf/go-crud-study/src/configuration/rest_err"
+	"github.com/pedrodecf/go-crud-study/src/configuration/validation"
+	"github.com/pedrodecf/go-crud-study/src/controller/model/request"
 )
 
-func CreateUser (c *gin.Context) {
-	err := rest_err.NewBadRequestError("Você chamou a rota de forma errada")
-	c.JSON(err.Code, err)
+func CreateUser(c *gin.Context) {
+	var userRequest request.UserRequest
+	
+	if err := c.ShouldBindJSON(&userRequest); err != nil {
+		restErr := validation.ValidateUserError(err)
+		c.JSON(restErr.Code, restErr)
+		return
+	}
+
+	fmt.Println(userRequest)
 }
